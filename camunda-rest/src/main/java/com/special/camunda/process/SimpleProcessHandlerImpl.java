@@ -127,6 +127,22 @@ public class SimpleProcessHandlerImpl implements SimpleProcessHandler {
 		return taskList;
 	}
 
+	@Override
+	public void mandualApproveProcess(TaskRequest taskRequest) throws Exception {
+		Map<String, Object> variables = taskRequest.getVariables();
+		variables.put("userId","all");
+		List<TaskDto> taskDtoList = simpleGetTasks(taskRequest.getProcessInstId());
+		String taskId = "";
+		for (TaskDto taskDto : taskDtoList) {
+			if(taskRequest.getProcessInstId().equals(taskDto.getProcessInstanceId())){
+				taskId = taskDto.getId();
+			}
+		}
+		taskService.createComment(taskId, taskRequest.getProcessInstId(), "执行手工流程");
+		taskService.complete(taskId, variables);
+
+	}
+
 	public List<TaskDto> simpleGetTasks(String processInstId) throws Exception {
 		List<TaskDto> resultList = new ArrayList<TaskDto>();
 		List<Task> taskList = taskService.createTaskQuery().processInstanceId(processInstId).list();

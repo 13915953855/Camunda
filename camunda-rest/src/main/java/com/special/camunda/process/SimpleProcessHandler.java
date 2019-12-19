@@ -33,6 +33,10 @@ public interface SimpleProcessHandler {
 
 	@ApiOperation(value = "流程审批", notes = "流程审批")
 	@RequestMapping(value = "/simpleApproveProcess", method = RequestMethod.POST)
-	public List<TaskDto>  simpleApproveProcess(@RequestBody TaskRequest taskRequest, HttpServletRequest request) throws Exception;
+	public List<TaskDto> simpleApproveProcess(@RequestBody TaskRequest taskRequest, HttpServletRequest request) throws Exception;
+
+	@ApiOperation(value = "手工任务流程审批", notes = "手工任务流程审批")
+	@RequestMapping(value = "/mandualApproveProcess", method = RequestMethod.POST)
+	public void mandualApproveProcess(@RequestBody TaskRequest taskRequest) throws Exception;
 
 }

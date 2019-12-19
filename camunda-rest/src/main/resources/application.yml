@@ -23,7 +23,7 @@ eureka:
       
 spring:
   application:
-    name: camunda-service
+    name: workflow-service
   datasource:
     driver-class-name: com.mysql.jdbc.Driver
     url: jdbc:mysql://127.0.0.1:3306/camunda_demo?useUnicode=true&characterEncoding=UTF-8

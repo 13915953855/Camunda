@@ -54,7 +54,6 @@ public class MessageService implements JavaDelegate {
         Map<String, Object> variables = execution.getVariables();
         String processInstanceId = execution.getProcessInstanceId();
         variables.put("processInstanceId",processInstanceId);
-        variables.put("needCallBack","true");
         log.info("Variables:{}", JSON.toJSONString(variables));
 
         HttpHeaders headers = new HttpHeaders();

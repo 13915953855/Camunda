@@ -53,7 +53,8 @@ public class SchedualService implements JavaDelegate {
             log.error("expire is null，return");
             return;
         }
-        object.put("expire", execution.getVariable("expire"));
+        Float expire = (Float) execution.getVariable("expire");
+        object.put("expire", expire*1000);
         object.put("service", service);
         object.put("function", function);
         object.put("param", param);

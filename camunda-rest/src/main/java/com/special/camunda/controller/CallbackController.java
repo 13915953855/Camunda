@@ -20,16 +20,9 @@ import java.util.Map;
  */
 @RestController
 @Slf4j
-public class TestController {
-    @Autowired
-    private HelloClient helloClient;
+public class CallbackController {
     @Autowired
     private SimpleProcessHandler simpleProcessHandler;
-
-    @PostMapping("/test")
-    public void test(){
-        helloClient.sayHello();
-    }
 
     @PostMapping("/callback")
     public void callback(@RequestBody JSONObject jsonObject){

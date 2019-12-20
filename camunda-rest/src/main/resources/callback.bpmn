@@ -9,7 +9,7 @@
       <bpmn2:extensionElements>
         <camunda:inputOutput>
           <camunda:inputParameter name="service">MICROSERVICE</camunda:inputParameter>
-          <camunda:inputParameter name="function">/callback</camunda:inputParameter>
+          <camunda:inputParameter name="function">/hello</camunda:inputParameter>
         </camunda:inputOutput>
       </bpmn2:extensionElements>
       <bpmn2:incoming>SequenceFlow_1wtjwdn</bpmn2:incoming>

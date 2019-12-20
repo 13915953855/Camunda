@@ -1,16 +1,25 @@
 package com.special.camunda.process;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.special.camunda.request.ProcessRequest;
 import com.special.camunda.request.TaskRequest;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.util.EntityUtils;
 import org.camunda.bpm.engine.*;
 import org.camunda.bpm.engine.history.HistoricActivityInstance;
 import org.camunda.bpm.engine.history.HistoricTaskInstance;
 import org.camunda.bpm.engine.impl.persistence.entity.TaskEntity;
+import org.camunda.bpm.engine.repository.DiagramLayout;
+import org.camunda.bpm.engine.repository.ProcessDefinition;
 import org.camunda.bpm.engine.rest.dto.task.TaskDto;
 import org.camunda.bpm.engine.runtime.ActivityInstance;
 import org.camunda.bpm.engine.runtime.ProcessInstance;
+import org.camunda.bpm.engine.runtime.ProcessInstanceQuery;
 import org.camunda.bpm.engine.task.Task;
 import org.camunda.bpm.webapp.impl.security.auth.AuthenticationService;
 import org.camunda.bpm.webapp.impl.security.auth.Authentications;
@@ -18,9 +27,20 @@ import org.camunda.bpm.webapp.impl.security.auth.UserAuthentication;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestClientException;
+import org.springframework.web.client.RestTemplate;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -44,6 +64,9 @@ public class SimpleProcessHandlerImpl implements SimpleProcessHandler {
 
 	@Autowired
 	private IdentityService identityService;
+
+	@Autowired
+	private RepositoryService repositoryService;
 
 	@Override
 	public List<TaskDto> simpleInitProcess(ProcessRequest processRequest) throws Exception {
@@ -174,5 +197,57 @@ public class SimpleProcessHandlerImpl implements SimpleProcessHandler {
 		}
 
 		return null;
+	}
+
+//	@Override
+//	public String simpleGetProcessDiagramUrl(String processInstId, HttpServletResponse response) throws Exception {
+//		ProcessInstance processInstance = runtimeService.createProcessInstanceQuery().processInstanceId(processInstId).singleResult();
+//		ProcessDefinition processDefinition = repositoryService.getProcessDefinition(processInstance.getProcessDefinitionId());
+//		InputStream processDiagram = repositoryService.getProcessDiagram(processDefinition.getId());
+//
+//		OutputStream out = null;
+//		byte[] buf = new byte[1024];
+//		int legth = 0;
+//		try {
+//			out = response.getOutputStream();
+//			while ((legth = processDiagram.read(buf)) != -1) {
+//				out.write(buf, 0, legth);
+//			}
+//		} finally {
+//			if (processDiagram != null) {
+//				processDiagram.close();
+//			}
+//			if (out != null) {
+//				out.close();
+//			}
+//		}
+//		return "ok";
+//	}
+
+	@Autowired
+	private RestTemplate restTemplate;
+
+	@Value("${server.port}")
+	private String port;
+
+	@Override
+	public String simpleGetProcessDiagramXml(JSONObject jsonObject) throws IOException {
+		String processInstId = jsonObject.getString("processInstId");
+		ProcessInstance processInstance = runtimeService.createProcessInstanceQuery().processInstanceId(processInstId).singleResult();
+		String respone = "";
+
+		String url = "http://localhost:"+port+"/rest/engine/default/process-definition/"+processInstance.getProcessDefinitionId()+"/xml";
+		HttpGet httpGet = new HttpGet(url);
+		CloseableHttpClient client = HttpClients.createDefault();
+		try {
+			CloseableHttpResponse httpResponse = client.execute(httpGet);
+			respone = EntityUtils.toString(httpResponse.getEntity());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}finally{
+			//close()
+			client.close();
+		}
+		return respone;
 	}
 }

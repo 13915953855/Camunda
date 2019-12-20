@@ -26,7 +26,7 @@ public class CallbackController {
 
     @PostMapping("/callback")
     public void callback(@RequestBody JSONObject jsonObject){
-        log.info("触发回调事件");
+        log.info("触发回调事件,{}",jsonObject);
         String pass = jsonObject.getString("pass");
         String processInstanceId = jsonObject.getString("processInstanceId");
         Map<String,Object> variables = new HashMap<>();

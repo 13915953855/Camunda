@@ -61,7 +61,7 @@
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpclient</artifactId>
-            <version>4.5.3</version>
+            <version>4.5.13</version>
         </dependency>
         <!-- 注意该依赖一定要放在spring-cloud-starter-openfeign依赖的上边，不然消费方可能会出现一些问题 -->
         <dependency>
